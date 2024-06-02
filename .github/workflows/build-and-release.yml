@@ -33,11 +33,15 @@ jobs:
     - name: Zip win-x64
       run: zip -j win-x64.zip ./output/win-x64/*
 
+    - name: Extract tag name
+      id: extract_tag
+      run: echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
     - name: Create GitHub Release
       uses: ncipollo/release-action@v1
       with:
         tag: ${{ github.ref }}
-        name: Release ${{ github.ref }}
+        name: ${{ env.TAG_NAME }}
         body: |
           ## Release Notes
           This release includes the build artifacts for `win-x86` and `win-x64`.
