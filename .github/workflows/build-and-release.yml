@@ -1,0 +1,94 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Publish for win-x86
+      run: dotnet publish SessionManager/SessionManager.csproj -c Release -r win-x86 --self-contained false -p:PublishSingleFile=true -o ./output/win-x86
+
+    - name: Publish for win-x64
+      run: dotnet publish SessionManager/SessionManager.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ./output/win-x64
+
+    - name: Zip win-x86
+      run: zip -j win-x86.zip ./output/win-x86/*
+
+    - name: Zip win-x64
+      run: zip -j win-x64.zip ./output/win-x64/*
+
+    - name: Upload win-x86.zip
+      uses: actions/upload-artifact@v2
+      with:
+        name: win-x86
+        path: win-x86.zip
+
+    - name: Upload win-x64.zip
+      uses: actions/upload-artifact@v2
+      with:
+        name: win-x64
+        path: win-x64.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download win-x86.zip
+      uses: actions/download-artifact@v2
+      with:
+        name: win-x86
+        path: .
+
+    - name: Download win-x64.zip
+      uses: actions/download-artifact@v2
+      with:
+        name: win-x64
+        path: .
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload win-x86.zip to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./win-x86.zip
+        asset_name: win-x86.zip
+        asset_content_type: application/zip
+
+    - name: Upload win-x64.zip to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./win-x64.zip
+        asset_name: win-x64.zip
+        asset_content_type: application/zip
