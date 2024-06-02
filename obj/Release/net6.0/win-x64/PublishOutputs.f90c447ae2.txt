@@ -1,1 +1,0 @@
-/Users/danijeljw/Projects/repasscloud/SessionManager/output/win-x64/SessionManager.exe

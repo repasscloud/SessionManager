@@ -1,1 +1,0 @@
-/Users/danijeljw/Projects/repasscloud/SessionManager/bin/Release/net6.0/win-x86/publish/SessionManager.exe
