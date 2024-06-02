@@ -33,45 +33,56 @@ jobs:
     - name: Zip win-x64
       run: zip -j win-x64.zip ./output/win-x64/*
 
-    - name: Upload win-x86.zip
-      uses: actions/upload-artifact@v4.3.3
+    - name: Create GitHub Release
+      uses: ncipollo/release-action@v1
       with:
-        name: win-x86
-        path: win-x86.zip
+        tag: ${{ github.ref }}
+        name: Release ${{ github.ref }}
+        body: |
+          ## Release Notes
+          This release includes the build artifacts for `win-x86` and `win-x64`.
+        artifacts: "win-x86.zip,win-x64.zip"
+        token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload win-x64.zip
-      uses: actions/upload-artifact@v4.3.3
-      with:
-        name: win-x64
-        path: win-x64.zip
+    # - name: Upload win-x86.zip
+    #   uses: actions/upload-artifact@v4.3.3
+    #   with:
+    #     name: win-x86
+    #     path: win-x86.zip
 
-  release:
-    needs: build
-    runs-on: ubuntu-latest
+    # - name: Upload win-x64.zip
+    #   uses: actions/upload-artifact@v4.3.3
+    #   with:
+    #     name: win-x64
+    #     path: win-x64.zip
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+#   release:
+#     needs: build
+#     runs-on: ubuntu-latest
 
-      - name: Download win-x86.zip
-        uses: actions/download-artifact@v2
-        with:
-          name: win-x86
-          path: .
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
 
-      - name: Download win-x64.zip
-        uses: actions/download-artifact@v2
-        with:
-          name: win-x64
-          path: .
+#       - name: Download win-x86.zip
+#         uses: actions/download-artifact@v2
+#         with:
+#           name: win-x86
+#           path: .
 
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ github.ref }}
-          name: Release ${{ github.ref }}
-          body: |
-            ## Release Notes
-            This release includes the build artifacts for `win-x86` and `win-x64`.
-          artifacts: "win-x86.zip,win-x64.zip"
-          token: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Download win-x64.zip
+#         uses: actions/download-artifact@v2
+#         with:
+#           name: win-x64
+#           path: .
+
+    #   - name: Create GitHub Release
+    #     uses: ncipollo/release-action@v1
+    #     with:
+    #       tag: ${{ github.ref }}
+    #       name: Release ${{ github.ref }}
+    #       body: |
+    #         ## Release Notes
+    #         This release includes the build artifacts for `win-x86` and `win-x64`.
+    #       artifacts: "win-x86.zip,win-x64.zip"
+    #       token: ${{ secrets.GITHUB_TOKEN }}
