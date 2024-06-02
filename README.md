@@ -49,3 +49,15 @@ dotnet publish -c Release -r win-x86 --self-contained false -p:PublishSingleFile
 ```bash
 dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
 ```
+
+## Github Actions Workflow
+
+The provided GitHub Actions workflow builds and releases the application for both `win-x86` and `win-x64` platforms. The workflow:
+
+1. Builds the application for `win-x86` and `win-x64`.
+2. Zips the executables.
+3. Creates a GitHub releaese with the build artifacts.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
