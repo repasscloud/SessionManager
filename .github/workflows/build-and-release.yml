@@ -22,10 +22,10 @@ jobs:
       run: dotnet restore
 
     - name: Publish for win-x86
-      run: dotnet publish SessionManager/SessionManager.csproj -c Release -r win-x86 --self-contained false -p:PublishSingleFile=true -o ./output/win-x86
+      run: dotnet publish SessionManager.csproj -c Release -r win-x86 --self-contained false -p:PublishSingleFile=true -o ./output/win-x86
 
     - name: Publish for win-x64
-      run: dotnet publish SessionManager/SessionManager.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ./output/win-x64
+      run: dotnet publish SessionManager.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ./output/win-x64
 
     - name: Zip win-x86
       run: zip -j win-x86.zip ./output/win-x86/*
