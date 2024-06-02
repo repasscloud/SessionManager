@@ -21,6 +21,13 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
+    - name: Extract tag name
+      id: extract_tag
+      run: echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+    - name: Update version in PrintVersionInfo.cs
+      run: sed -i "s/Session Manager vX.X.X/Session Manager ${{ env.TAG_NAME }}/" ./Helpers/PrintVersionInfo.cs
+
     - name: Publish for win-x86
       run: dotnet publish ./SessionManager.csproj -c Release -r win-x86 --self-contained false -p:PublishSingleFile=true -o ./output/win-x86
 
@@ -32,10 +39,6 @@ jobs:
 
     - name: Zip win-x64
       run: zip -j win-x64.zip ./output/win-x64/*
-
-    - name: Extract tag name
-      id: extract_tag
-      run: echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
     - name: Create GitHub Release
       uses: ncipollo/release-action@v1
